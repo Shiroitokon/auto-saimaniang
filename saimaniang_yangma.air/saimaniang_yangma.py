@@ -113,6 +113,7 @@ def init_config():
 
     global max_clock
     global skill_limit
+    global c_skill_limit
     global skill_end_mark
     global running
     global start_round
@@ -126,6 +127,7 @@ def init_config():
     global event_list
     max_clock = int(json_config["clock_times"])
     skill_limit = int(json_config["skill_start_limit"])
+    c_skill_limit = skill_limit
     skill_end_mark = int(json_config["skill_stop_limit"])
     running = int(json_config["running"])
     start_round = int(json_config["start_round"])
@@ -408,7 +410,14 @@ def skill_is_in_table(mark_point):
     
 def custom_match(round_strategy):
     touch(Template(r"tpl1694698924245.png", record_pos=(0.261, 0.718), resolution=(720, 1280)))
-    wait(Template(r"tpl1694098144940.png", record_pos=(0.206, 0.612), resolution=(1080, 1920)))
+    while True:
+        pos = exists(Template(r"tpl1694098144940.png", threshold=0.85, record_pos=(0.206, 0.612), resolution=(1080, 1920)))
+        if pos is not None:
+            if pos[1] < 1000:
+                touch(pos)
+                sleep(1)
+            else:
+                break
     
     match_p = find_match(round_strategy)
     if match_p is not None:
