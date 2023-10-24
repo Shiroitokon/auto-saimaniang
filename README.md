@@ -9,7 +9,8 @@
 提取码：6666  
 2.解压文件后进入sciprt目录下  
 3.将saimaniang_init.air文件以及saimaniang_yangma.air文件复制到/script目录中  
-
+**<h3>特别说明，如果只需要养成功能只要复制saimaniang_yangma.air！！不需要复制saimaniang_init.air，防止错误的启用刷初始功能造成删号</h3>**
+![启动界面](./img/图片1.png)
 
 ## 方式二 (不推荐)
 运行脚本需要自行修改脚本内的养成参数  
