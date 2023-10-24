@@ -1162,7 +1162,7 @@ def get_action(top_area):
 #     is_40 = Template(r"tpl1694533578512.png", threshold=0.993, rgb=False).match_in(top_area)
 #     if(is_40 is not None):
 #         return 40    
-    is_full = Template(r"tpl1696936022044.png", threshold=0.993).match_in(top_area)
+    is_full = Template(r"tpl1698162071213.png", threshold=0.993).match_in(top_area)
     if(is_full is not None):
         return 100
     is_80 = Template(r"tpl1696936095055.png", threshold=0.993).match_in(top_area)
