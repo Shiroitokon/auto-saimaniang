@@ -864,7 +864,7 @@ def select_event(full_screen = None):
                     re_target = target_title[3:]
                     if str_compare(re_target, title):
                         action = get_action(get_top_screen(full_screen))
-                        if action < 80:
+                        if action <= 80:
                             select_pos_index = int(target_title[1:2]) - 1
                             break
                 else:       
@@ -1156,15 +1156,18 @@ def get_action(top_area):
 #     is_60 = Template(r"tpl1694533422676.png", threshold=0.993, rgb=False).match_in(top_area)
 #     if(is_60 is not None):
 #         return 60
-#     is_50 = Template(r"tpl1694533449666.png", threshold=0.993, rgb=False).match_in(top_area)
+#     is_50 = Template(r"tpl1694533449666.png", threshold=0.993, rgb=False).match_in(top_area
 #     if(is_50 is not None):
 #         return 50
 #     is_40 = Template(r"tpl1694533578512.png", threshold=0.993, rgb=False).match_in(top_area)
 #     if(is_40 is not None):
-#         return 40    
-    is_full = Template(r"tpl1698162071213.png", threshold=0.993).match_in(top_area)
+#         return 40   
+    is_full = Template(r"tpl1698198985697.png", threshold=0.993).match_in(top_area)
     if(is_full is not None):
         return 100
+    is_90 = Template(r"tpl1698162071213.png", threshold=0.993).match_in(top_area)
+    if(is_90 is not None):
+        return 90
     is_80 = Template(r"tpl1696936095055.png", threshold=0.993).match_in(top_area)
     if(is_80 is not None):
         return 80
