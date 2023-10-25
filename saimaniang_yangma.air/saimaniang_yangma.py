@@ -412,7 +412,7 @@ def custom_match(round_strategy):
     touch(Template(r"tpl1694698924245.png", record_pos=(0.261, 0.718), resolution=(720, 1280)))
     while True:
         pos = exists(Template(r"tpl1694098144940.png", threshold=0.85, record_pos=(0.206, 0.612), resolution=(1080, 1920)))
-        if pos is not None:
+        if pos:
             if pos[1] < 1000:
                 touch(pos)
                 sleep(1)
