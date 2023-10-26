@@ -1010,6 +1010,7 @@ def select_train_attribute(pos):
         return intelligence_p
 
 def wait_train_select(xunlian_area_point):
+    wait_times = 0
     while True:
         full_screen = G.DEVICE.snapshot()
         select = aircv.crop_image(full_screen, xunlian_area_point)
@@ -1017,7 +1018,11 @@ def wait_train_select(xunlian_area_point):
         if select_c is not None:
             sleep(1)
             break
-    
+        sleep(0.2)
+        wait_times = wait_times + 1
+        if wait_times > 100:
+            raise Exception('选择训练超时异常')
+            
 #获取友情羁绊信息
 #return 【总数，速度，耐力， 力量， 毅力，智力】
 def get_friendship_info():
@@ -1046,7 +1051,7 @@ def get_friendship_info():
     if intelligences is not None:
         intelligence_c = len(intelligences)
     
-    fulls = Template(r"tpl1697983435208.png", threshold=0.993, rgb=False).match_all_in(friendship_area_screen)
+    fulls = Template(r"tpl1698329165414.png", threshold=0.97).match_all_in(friendship_area_screen)
     if fulls is not None:
         full_c = len(fulls)
     fulls = Template(r"tpl1697983542239.png", threshold=0.95).match_all_in(friendship_area_screen)
