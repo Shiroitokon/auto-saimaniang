@@ -315,9 +315,10 @@ def run_round(action, mood, health, attribute, skill, page_type):
         top_screen = get_top_screen()
         retry =Template(r"tpl1695992411168.png", threshold=0.9).match_in(top_screen)
         if retry is not None:
-            custom_match("初级")
-            select_after(5)
-            return
+            if c_round % 2 != 0:
+                custom_match("初级")
+                select_after(5)
+                return
         
     round_strategy = round_strategies[c_round]
     if page_type == 1:
@@ -867,6 +868,10 @@ def select_event(full_screen = None):
                         if action <= 80:
                             select_pos_index = int(target_title[1:2]) - 1
                             break
+                        else:
+                            if int(target_title[1:2]) == 1:
+                                select_pos_index = 1
+                            break
                 else:       
                     re_target = target_title[2:]
                     if str_compare(re_target, title):
@@ -1041,7 +1046,7 @@ def get_friendship_info():
     if intelligences is not None:
         intelligence_c = len(intelligences)
     
-    fulls = Template(r"tpl1697983435208.png", threshold=0.65, rgb=True).match_all_in(friendship_area_screen)
+    fulls = Template(r"tpl1697983435208.png", threshold=0.993, rgb=False).match_all_in(friendship_area_screen)
     if fulls is not None:
         full_c = len(fulls)
     fulls = Template(r"tpl1697983542239.png", threshold=0.95).match_all_in(friendship_area_screen)
