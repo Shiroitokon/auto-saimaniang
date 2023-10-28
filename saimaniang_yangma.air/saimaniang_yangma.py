@@ -1157,40 +1157,44 @@ def get_center_screen(full_screen = None):
 
 #获取体力状态    
 def get_action(top_area):
-#     is_full = Template(r"tpl1694844917556.png", threshold=0.993, rgb=False).match_in(top_area)
+
+#     is_full = Template(r"tpl1698198985697.png", threshold=0.993).match_in(top_area)
 #     if(is_full is not None):
 #         return 100
-#     is_80 = Template(r"tpl1694533385949.png", threshold=0.993, rgb=False).match_in(top_area)
+#     is_90 = Template(r"tpl1698162071213.png", threshold=0.993).match_in(top_area)
+#     if(is_90 is not None):
+#         return 90
+#     is_80 = Template(r"tpl1696936095055.png", threshold=0.993).match_in(top_area)
 #     if(is_80 is not None):
 #         return 80
-#     is_60 = Template(r"tpl1694533422676.png", threshold=0.993, rgb=False).match_in(top_area)
+#     is_60 = Template(r"tpl1696936131003.png", threshold=0.993).match_in(top_area)
 #     if(is_60 is not None):
 #         return 60
-#     is_50 = Template(r"tpl1694533449666.png", threshold=0.993, rgb=False).match_in(top_area
+#     is_50 = Template(r"tpl1696936170736.png", threshold=0.993).match_in(top_area)
 #     if(is_50 is not None):
 #         return 50
-#     is_40 = Template(r"tpl1694533578512.png", threshold=0.993, rgb=False).match_in(top_area)
+#     is_40 = Template(r"tpl1696936239396.png", threshold=0.993).match_in(top_area)
 #     if(is_40 is not None):
-#         return 40   
-    is_full = Template(r"tpl1698198985697.png", threshold=0.993).match_in(top_area)
-    if(is_full is not None):
-        return 100
-    is_90 = Template(r"tpl1698162071213.png", threshold=0.993).match_in(top_area)
-    if(is_90 is not None):
-        return 90
-    is_80 = Template(r"tpl1696936095055.png", threshold=0.993).match_in(top_area)
-    if(is_80 is not None):
-        return 80
-    is_60 = Template(r"tpl1696936131003.png", threshold=0.993).match_in(top_area)
-    if(is_60 is not None):
-        return 60
-    is_50 = Template(r"tpl1696936170736.png", threshold=0.993).match_in(top_area)
-    if(is_50 is not None):
+#         return 40
+    is_40 = Template(r"tpl_tili40.png", threshold=0.993).match_in(top_area)
+    if is_40 is not None:
+        return 0
+    is_50 = Template(r"tpl_tili50.png", threshold=0.993).match_in(top_area)
+    if is_50 is not None:
+        return 40
+    is_60 = Template(r"tpl_tili60.png", threshold=0.993).match_in(top_area)
+    if is_60 is not None:
         return 50
-    is_40 = Template(r"tpl1696936239396.png", threshold=0.993).match_in(top_area)
-    if(is_40 is not None):
-        return 40        
-    return 0
+    is_80 = Template(r"tpl_tili80.png", threshold=0.993).match_in(top_area)
+    if is_80 is not None:
+        return 60
+    is_90 = Template(r"tpl_tili90.png", threshold=0.993).match_in(top_area)
+    if is_90 is not None:
+        return 80
+    is_95 = Template(r"tpl_tili95.png", threshold=0.993).match_in(top_area)
+    if is_95 is not None:
+        return 90
+    return 100
 
 #获取心情
 def get_mood(mood_point):
@@ -1305,8 +1309,6 @@ def str_compare(str1, str2):
 
 init_config()
 do_task()
-
-
 
 
 
