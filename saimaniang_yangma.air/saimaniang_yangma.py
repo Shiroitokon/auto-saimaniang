@@ -295,6 +295,7 @@ def get_status():
     health = get_health(task_area, page_type)
     attribute = get_attribute(full_screen, page_type)
     skill = get_skill(full_screen, page_type)
+    score_coefficient = get_score_coefficient(attribute)
     logging.critical("===========================================================================================================================")
     logging.critical("当前回合：{}".format(c_round))
     logging.critical("当前体力为：{}".format(action))
@@ -302,6 +303,7 @@ def get_status():
     logging.critical("当前健康状态为：{}".format(health))
     logging.critical("当前技能点数为：{}".format(skill))
     logging.critical("当前属性：速度：{}, 耐力：{}, 力量：{}, 毅力：{}, 智力：{}".format(attribute[0], attribute[1], attribute[2], attribute[3], attribute[4]))
+    logging.critical("训练得分：速度：{}, 耐力：{}, 力量：{}, 毅力：{}, 智力：{}".format(score_coefficient[0], score_coefficient[1], score_coefficient[2], score_coefficient[3], score_coefficient[4]))
     logging.critical("===========================================================================================================================")
     return [action, mood, health, attribute, skill, page_type]
 
@@ -691,22 +693,8 @@ def train(full_screen, attributes, appoint = None):
         touch_p = select_train_attribute(appoint)
         touch(touch_p)
         return
-    #总属性
-    total_attribute = 0
-    total_coefficient = 0
-    for i in range(len(strategy)):
-        if strategy[i] == 0:
-            continue
-        total_attribute = total_attribute + attributes[i]
-        total_coefficient = total_coefficient + strategy[i]
 
-    #得分期望
-    score_coefficient = [0, 0, 0, 0, 0]
-    for i in range(len(attributes)):
-        if strategy[i] == 0:
-            continue
-        target_score = (strategy[i] / total_coefficient) * total_attribute
-        score_coefficient[i] = target_score / attributes[i]
+    score_coefficient = get_score_coefficient(attributes=attributes)
 
     max_score = 0
     select_pos = 0
@@ -726,7 +714,27 @@ def train(full_screen, attributes, appoint = None):
 
     touch_p = select_train_attribute(select_pos)
     touch(touch_p)
-    
+
+def get_score_coefficient(attributes):
+    #总属性
+    total_attribute = 0
+    total_coefficient = 0
+    for i in range(len(strategy)):
+        if strategy[i] == 0:
+            continue
+        total_attribute = total_attribute + attributes[i]
+        total_coefficient = total_coefficient + strategy[i]
+
+    #得分期望
+    score_coefficient = [0, 0, 0, 0, 0]
+    for i in range(len(attributes)):
+        if strategy[i] == 0:
+            continue
+        target_score = (strategy[i] / total_coefficient) * total_attribute
+        score_coefficient[i] = target_score / attributes[i]
+    return score_coefficient
+
+
 #友情训练策略    
 def friendship_strategy(action, mood, health, attribute):
     full_screen = G.DEVICE.snapshot()
