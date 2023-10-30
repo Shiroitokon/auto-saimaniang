@@ -303,7 +303,7 @@ def get_status():
     logging.critical("当前健康状态为：{}".format(health))
     logging.critical("当前技能点数为：{}".format(skill))
     logging.critical("当前属性：速度：{}, 耐力：{}, 力量：{}, 毅力：{}, 智力：{}".format(attribute[0], attribute[1], attribute[2], attribute[3], attribute[4]))
-    logging.critical("训练得分：速度：{}, 耐力：{}, 力量：{}, 毅力：{}, 智力：{}".format(score_coefficient[0], score_coefficient[1], score_coefficient[2], score_coefficient[3], score_coefficient[4]))
+    logging.critical("训练得分：速度：{}, 耐力：{}, 力量：{}, 毅力：{}, 智力：{}".format(round(score_coefficient[0], 2), round(score_coefficient[1], 2), round(score_coefficient[2], 2), round(score_coefficient[3], 2), round(score_coefficient[4], 2)))
     logging.critical("===========================================================================================================================")
     return [action, mood, health, attribute, skill, page_type]
 
