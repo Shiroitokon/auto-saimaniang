@@ -689,31 +689,34 @@ def train(full_screen, attributes, appoint = None):
     pos = Template(r"tpl1694531664870.png").match_in(task_screen)
     touch((pos[0] + task_area_point[0], pos[1] + task_area_point[1]))
     wait(Template(r"tpl1694005273843.png"))
-    if appoint is not None:
-        touch_p = select_train_attribute(appoint)
+    try:
+        if appoint is not None:
+            touch_p = select_train_attribute(appoint)
+            touch(touch_p)
+            return
+
+        score_coefficient = get_score_coefficient(attributes=attributes)
+
+        max_score = 0
+        select_pos = 0
+        for i in range(len(strategy)):
+            if strategy[i] == 0:
+                continue
+
+            select_train_attribute(i)
+            scores = get_train_score()
+            total_score = 0
+            for a in range(len(scores)):
+                score = scores[a] * score_coefficient[a]
+                total_score = total_score + score
+            if total_score > max_score:
+                max_score = total_score
+                select_pos = i
+
+        touch_p = select_train_attribute(select_pos)
         touch(touch_p)
-        return
-
-    score_coefficient = get_score_coefficient(attributes=attributes)
-
-    max_score = 0
-    select_pos = 0
-    for i in range(len(strategy)):
-        if strategy[i] == 0:
-            continue
-
-        select_train_attribute(i)
-        scores = get_train_score()
-        total_score = 0
-        for a in range(len(scores)):
-            score = scores[a] * score_coefficient[a]
-            total_score = total_score + score
-        if total_score > max_score:
-            max_score = total_score
-            select_pos = i
-
-    touch_p = select_train_attribute(select_pos)
-    touch(touch_p)
+    except Exception as e:
+        touch(Template(r"tpl1694005273843.png"))
 
 def get_score_coefficient(attributes):
     #总属性
@@ -926,41 +929,44 @@ def tarin_friendship(full_screen, min_count = 0, free_action = False):
     pos = Template(r"tpl1694531664870.png").match_in(task_screen)
     touch((pos[0] + task_area_point[0], pos[1] + task_area_point[1]))
     wait(Template(r"tpl1694005273843.png"))
-    
-    if free_action:
-        touch_p = select_train_attribute(4)
-        if get_friendship_info()[0] >= min_count:
+    try:    
+        if free_action:
+            touch_p = select_train_attribute(4)
+            if get_friendship_info()[0] >= min_count:
+                sleep(1)
+                touch(touch_p)
+                return True
+            touch(Template(r"tpl1694010638710.png", record_pos=(-0.373, 0.826), resolution=(1080, 1920)))
+            wait_back_home()
+            return False
+
+        select_pos = 0
+        max_count = 0
+        # 获取当前位置
+
+        for i in range(len(strategy)):
+            select_train_attribute(i)
+            count = get_friendship_info()[0]
+            if count >= max_count:
+                if count == max_count and strategy[i] < strategy[select_pos]:
+                    continue
+                max_count = count
+                select_pos = i
+                if max_count >= 3:
+                    break
+
+        if max_count >= min_count:
+            touch_p = select_train_attribute(select_pos)
             sleep(1)
             touch(touch_p)
             return True
         touch(Template(r"tpl1694010638710.png", record_pos=(-0.373, 0.826), resolution=(1080, 1920)))
         wait_back_home()
         return False
-    
-    select_pos = 0
-    max_count = 0
-    # 获取当前位置
-    
-    for i in range(len(strategy)):
-        select_train_attribute(i)
-        count = get_friendship_info()[0]
-        if count >= max_count:
-            if count == max_count and strategy[i] < strategy[select_pos]:
-                continue
-            max_count = count
-            select_pos = i
-            if max_count >= 3:
-                break
-    
-    if max_count >= min_count:
-        touch_p = select_train_attribute(select_pos)
-        sleep(1)
-        touch(touch_p)
+    except Exception as e:
+        touch(Template(r"tpl1694005273843.png"))
+        wait_back_home()
         return True
-    touch(Template(r"tpl1694010638710.png", record_pos=(-0.373, 0.826), resolution=(1080, 1920)))
-    wait_back_home()
-    return False
-
 #选择训练属性    
 def select_train_attribute(pos):
     full_screen = G.DEVICE.snapshot()
@@ -1028,7 +1034,7 @@ def wait_train_select(xunlian_area_point):
             break
         sleep(0.2)
         wait_times = wait_times + 1
-        if wait_times > 100:
+        if wait_times > 50:
             raise Exception('选择训练超时异常')
             
 #获取友情羁绊信息
