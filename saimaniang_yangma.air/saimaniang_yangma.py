@@ -64,6 +64,8 @@ train_endurance_area_point = (178, 888, 297, 1188)
 train_power_area_point = (297, 888, 429, 1188)
 train_perseverance_area_point = (429, 888, 561, 1188)
 train_intelligence_area_point = (561, 888, 693, 1188)
+#误识别文本修复
+ocr_fix_table = {"(康丽莎电女树":"伊丽莎白女王杯"}
 #=====================================用户配置=====================
 #技能字典
 skill_table = ["蓝玫瑰猎人", "汝等,瞻仰皇帝的神威吧", "直线能手", 
@@ -405,6 +407,7 @@ def skill_is_in_table(mark_point):
         return False
     
     skill_text = point2text(skill_text_area)
+    logging.critical("技能ocr文本识别：{}".format(skill_text))
     for i in range(len(skill_table)):
         if str_compare(skill_table[i], skill_text):
             return True
@@ -443,7 +446,7 @@ def find_match(name):
                     continue
                 
                 mark = point2text(match_point, 0, full_screen)
-                
+                logging.critical("赛事ocr文本识别：{}".format(mark))
                 if str_compare(name, mark):
                     return matchs[i]['result']
         
@@ -464,6 +467,7 @@ def find_support(name):
             if name is None or name == "":
                 return mark_point
             support_name = point2text(point)
+            logging.critical("好友ocr文本识别：{}".format(support_name))
             if str_compare(name, support_name):
                 return mark_point
         
@@ -871,6 +875,7 @@ def select_event(full_screen = None):
         select_pos_index = 0
         if len(event_list) > 0:
             title = point2text(event_title_area_point, 0, full_screen)
+            logging.critical("事件ocr文本识别：{}".format(title))
             for target_title in event_list:
                 if target_title[0] == "*":
                     re_target = target_title[3:]
@@ -1275,7 +1280,8 @@ def screen2text(screen, ocr_tyep = 0):
         out = cn_ocr.ocr(np_img)
         if out is None or len(out) == 0:
             return ""
-        return out[0]['text'].replace(" ", "")
+        ocr_text = out[0]['text'].replace(" ", "")
+        return ocr_fix(ocr_text)
     elif ocr_tyep == 1:
         out = en_ocr.ocr_for_single_line(np_img)
         if out['text'] == '':
@@ -1287,22 +1293,13 @@ def point2text(area_point, ocr_tyep = 0, full_screen = None):
     if full_screen is None:
         full_screen = G.DEVICE.snapshot()
     area = aircv.crop_image(full_screen, area_point)
-    pil_img = cv2_2_pil(area)
-    np_img = np.array(pil_img)    
-    if ocr_tyep == 0:
-        out = cn_ocr.ocr(np_img)
-        if out is None or len(out) == 0:
-            return ""
-        return out[0]['text'].replace(" ", "")
-    elif ocr_tyep == 1:
-        out = en_ocr.ocr_for_single_line(np_img)
-        if out['text'] == '':
-            return 0
-        if out['score'] < 0.3:
-            return 0
-        return int(out['text'])
+    return screen2text(area, ocr_tyep)
 
-
+#修复误识别文本
+def ocr_fix(ocr_text):
+    if ocr_text in ocr_fix_table:
+        return ocr_fix_table.get(ocr_text)
+    return ocr_text
 #字符串比较，允许一个字的容错
 def str_compare(str1, str2):
     str1_c = len(str1)
