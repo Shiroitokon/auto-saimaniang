@@ -65,7 +65,7 @@ train_power_area_point = (297, 888, 429, 1188)
 train_perseverance_area_point = (429, 888, 561, 1188)
 train_intelligence_area_point = (561, 888, 693, 1188)
 #误识别文本修复
-ocr_fix_table = {"(康丽莎电女树":"伊丽莎白女王杯","安心~针灸师,登女场":"安心～针灸师,登☆场"}
+ocr_fix_table = {"(康丽莎电女树":"伊丽莎白女王杯","安心~针灸师,登女场":"安心～针灸师,登☆场", "锦月鸡": "皋月奖", "送王奖巷":"天王奖秋"}
 #=====================================用户配置=====================
 #技能字典
 skill_table = ["蓝玫瑰猎人", "汝等,瞻仰皇帝的神威吧", "直线能手", 
@@ -312,20 +312,22 @@ def get_status():
 
 def run_round(action, mood, health, attribute, skill, page_type):
     
-    if skill >= c_skill_limit:
-        study_skill(page_type)
     #出战翻车补偿
     if c_round > 11 and c_round < 20:
         top_screen = get_top_screen()
         retry =Template(r"tpl1695992411168.png", threshold=0.9).match_in(top_screen)
         if retry is not None:
             if c_round % 2 != 0:
+                if skill >= c_skill_limit:
+                    study_skill(page_type)                
                 custom_match("初级")
                 select_after(5)
                 return
         
     round_strategy = round_strategies[c_round]
     if page_type == 1:
+        if skill >= c_skill_limit:
+            study_skill(page_type)        
         result = story_strategy(mood, health, attribute)
         select_after(4)
         return   
@@ -338,6 +340,8 @@ def run_round(action, mood, health, attribute, skill, page_type):
         select_after(select_type)
         return
     if round_strategy == -3:
+        if skill >= c_skill_limit:
+            study_skill(page_type)           
         result = story_strategy(mood, health, attribute)
         select_after(4)
         return    
@@ -346,6 +350,8 @@ def run_round(action, mood, health, attribute, skill, page_type):
         select_after(select_type)
         return
     #根据比赛编号获取比赛信息，并参加
+    if skill >= c_skill_limit:
+        study_skill(page_type)    
     custom_match(round_strategy)
     select_after(5)
 
@@ -361,9 +367,10 @@ def study_skill(page_type = 0):
         wait(Template(r"tpl1694695726666.png", record_pos=(0.36, 0.613), resolution=(720, 1280)))
         skills = find_all(Template(r"tpl1694617619351.png", threshold=0.9, record_pos=(0.401, 0.135), resolution=(720, 1280)))
         if skills is not None:
+            full_screen = G.DEVICE.snapshot()
             for i in range(len(skills)):
                 mark_point = skills[i]['result']
-                if skill_is_in_table(mark_point):
+                if skill_is_in_table(mark_point, full_screen):
                     touch(mark_point)
                     sleep(0.5)
                     touch(mark_point)
@@ -400,13 +407,15 @@ def study_skill(page_type = 0):
     if page_type != 2:
         wait_back_home()
     
-def skill_is_in_table(mark_point):
+def skill_is_in_table(mark_point, full_screen = None):
+    if full_screen is None:
+        full_screen = G.DEVICE.snapshot()    
     skill_text_area = (125, mark_point[1] - 70, 400, mark_point[1] - 30)
     
     if skill_text_area[1] <= 465:
         return False
     
-    skill_text = point2text(skill_text_area)
+    skill_text = point2text(skill_text_area, 0, full_screen)
     logging.critical("技能ocr文本识别：{}".format(skill_text))
     for i in range(len(skill_table)):
         if str_compare(skill_table[i], skill_text):
@@ -461,12 +470,13 @@ def find_support(name):
     
     while True:
         supports = find_all(Template(r"tpl1695807488198.png", record_pos=(-0.178, -0.404), resolution=(720, 1280)))
+        full_screen = G.DEVICE.snapshot()
         for i in range(len(supports)):
             mark_point = supports[i]['result']
             point = (mark_point[0] - 88, mark_point[1] - 120, mark_point[0] + 247, mark_point[1] + 25)
             if name is None or name == "":
                 return mark_point
-            support_name = point2text(point)
+            support_name = point2text(point, 0, full_screen)
             logging.critical("好友ocr文本识别：{}".format(support_name))
             if str_compare(name, support_name):
                 return mark_point
@@ -533,9 +543,18 @@ def story_strategy(mood, health, attribute):
     global running_is_edit
     global c_clock
     global total_clock
+      
     touch(Template(r"tpl1694613518325.png", record_pos=(0.208, 0.651), resolution=(720, 1280)))
-    wait(Template(r"tpl1694013298278.png", rgb=True))
-    touch(Template(r"tpl1694013298278.png", rgb=True))
+    while True:
+        pos = exists(Template(r"tpl1694098144940.png", threshold=0.85, record_pos=(0.206, 0.612), resolution=(1080, 1920)))
+        if pos:
+            if pos[1] < 1000:
+                touch(pos)
+                sleep(1)
+            else:
+                break
+
+    touch(pos)
     wait(Template(r"tpl1694013350813.png"))
     touch(Template(r"tpl1694013673749.png", rgb=True))
     
