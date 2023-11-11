@@ -74,6 +74,7 @@ ocr_event_fix_table = {"安心~针灸师,登女场":"安心～针灸师,登☆�
 #技能误识别文本修复
 ocr_skill_fix_table= {}
 
+
 #=====================================用户配置=====================
 #技能字典
 skill_table = ["蓝玫瑰猎人", "汝等,瞻仰皇帝的神威吧", "直线能手", 
@@ -805,11 +806,12 @@ def friendship_strategy(action, mood, health, attribute):
     
 # 0 - 训练之后 1-外出之后 2-休息之后 3-医疗之后 4-剧情比赛之后 5-自定义比赛后    
 def select_after(select_tyep = 0):
+    pre_event = ''
     while True:
         full_screen = G.DEVICE.snapshot()
         if is_in_home(full_screen):
             return      
-        select_event(full_screen)
+        pre_event = select_event(full_screen, pre_event)
         parent_extend(full_screen)
         achievement_event(full_screen)
         if select_tyep == 1:
@@ -892,39 +894,40 @@ def zhua_wawa(full_screen = None):
             touch(Template(r"tpl1694875783629.png", record_pos=(0.004, 0.753), resolution=(720, 1280)))
             return
 #选择项目
-def select_event(full_screen = None):
+def select_event(full_screen = None, pre_title = ''):
     if full_screen is None:
         full_screen = G.DEVICE.snapshot()
     center_area_screen = get_center_screen(full_screen)
     all_select = Template(r"tpl1694611957715.png", threshold=0.85).match_all_in(center_area_screen)
-    # select_pos = Template(r"tpl1694611957715.png", threshold=0.85).match_in(center_area_screen)
-    # if select_pos is not None:
-    #     touch((select_pos[0] + center_area_point[0], select_pos[1] + center_area_point[1]))
+
     if all_select is not None and len(all_select) > 1:
         select_pos_index = 0
+        is_recheck = False
         if len(event_list) > 0:
             title = point2text(event_title_area_point, 0, full_screen)
             title = ocr_fix(title, ocr_event_fix_table)
-            logging.critical("事件ocr文本识别：{}".format(title))
-            for target_title in event_list:
-                if target_title[0] == "*":
-                    re_target = target_title[3:]
-                    if str_compare(re_target, title):
-                        action = get_action(get_top_screen(full_screen))
-                        if action <= 80:
-                            select_pos_index = int(target_title[1:2]) - 1
+            if pre_title != title:
+                logging.critical("事件ocr文本识别：{}".format(title))
+                for target_title in event_list:
+                    if target_title[0] == "*":
+                        re_target = target_title[3:]
+                        if str_compare(re_target, title):
+                            action = get_action(get_top_screen(full_screen))
+                            if action <= 80:
+                                select_pos_index = int(target_title[1:2]) - 1
+                                break
+                            else:
+                                if int(target_title[1:2]) == 1:
+                                    select_pos_index = 1
+                                break
+                    else:       
+                        re_target = target_title[2:]
+                        if str_compare(re_target, title):
+                            select_pos_index = int(target_title[0:1]) - 1
                             break
-                        else:
-                            if int(target_title[1:2]) == 1:
-                                select_pos_index = 1
-                            break
-                else:       
-                    re_target = target_title[2:]
-                    if str_compare(re_target, title):
-                        select_pos_index = int(target_title[0:1]) - 1
-                        break
-                        
         
+            pre_title = title
+        #对选项排序 
         for i in range(len(all_select)):
             for j in range(len(all_select)):
                  if all_select[i]['result'][1] < all_select[j]['result'][1]:
@@ -934,8 +937,8 @@ def select_event(full_screen = None):
 
         select_pos = all_select[select_pos_index]['result']
         touch((select_pos[0] + center_area_point[0], select_pos[1] + center_area_point[1]))
-
-
+    return pre_title
+        
 def is_in_home(full_screen = None):
     if full_screen is None:
         full_screen = G.DEVICE.snapshot()
