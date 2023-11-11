@@ -64,8 +64,16 @@ train_endurance_area_point = (178, 888, 297, 1188)
 train_power_area_point = (297, 888, 429, 1188)
 train_perseverance_area_point = (429, 888, 561, 1188)
 train_intelligence_area_point = (561, 888, 693, 1188)
-#误识别文本修复
-ocr_fix_table = {"(康丽莎电女树":"伊丽莎白女王杯","安心~针灸师,登女场":"安心～针灸师,登☆场", "锦月鸡": "皋月奖", "送王奖巷":"天王奖秋"}
+#比赛误识别文本修复
+ocr_match_fix_table = {"(康丽莎电女树":"伊丽莎白女王杯","安心~针灸师,登女场":"安心～针灸师,登☆场", 
+                 "锦月鸡": "皋月奖", "送王奖巷":"天王奖秋", "医王奖巷": "天王奖秋", "源":"大阪杯", "状·":"天王奖春",
+                 "状":"天王奖春"}
+#事件误识别文本修复
+ocr_event_fix_table = {"安心~针灸师,登女场":"安心～针灸师,登☆场"}
+
+#技能误识别文本修复
+ocr_skill_fix_table= {}
+
 #=====================================用户配置=====================
 #技能字典
 skill_table = ["蓝玫瑰猎人", "汝等,瞻仰皇帝的神威吧", "直线能手", 
@@ -416,6 +424,7 @@ def skill_is_in_table(mark_point, full_screen = None):
         return False
     
     skill_text = point2text(skill_text_area, 0, full_screen)
+    skill_text = ocr_fix(skill_text, ocr_skill_fix_table)
     logging.critical("技能ocr文本识别：{}".format(skill_text))
     for i in range(len(skill_table)):
         if str_compare(skill_table[i], skill_text):
@@ -455,6 +464,7 @@ def find_match(name):
                     continue
                 
                 mark = point2text(match_point, 0, full_screen)
+                mark = ocr_fix(mark, ocr_match_fix_table)
                 logging.critical("赛事ocr文本识别：{}".format(mark))
                 if str_compare(name, mark):
                     return matchs[i]['result']
@@ -894,6 +904,7 @@ def select_event(full_screen = None):
         select_pos_index = 0
         if len(event_list) > 0:
             title = point2text(event_title_area_point, 0, full_screen)
+            title = ocr_fix(title, ocr_event_fix_table)
             logging.critical("事件ocr文本识别：{}".format(title))
             for target_title in event_list:
                 if target_title[0] == "*":
@@ -1300,7 +1311,7 @@ def screen2text(screen, ocr_tyep = 0):
         if out is None or len(out) == 0:
             return ""
         ocr_text = out[0]['text'].replace(" ", "")
-        return ocr_fix(ocr_text)
+        return ocr_text
     elif ocr_tyep == 1:
         out = en_ocr.ocr_for_single_line(np_img)
         if out['text'] == '':
@@ -1315,7 +1326,7 @@ def point2text(area_point, ocr_tyep = 0, full_screen = None):
     return screen2text(area, ocr_tyep)
 
 #修复误识别文本
-def ocr_fix(ocr_text):
+def ocr_fix(ocr_text, ocr_fix_table):
     if ocr_text in ocr_fix_table:
         return ocr_fix_table.get(ocr_text)
     return ocr_text
