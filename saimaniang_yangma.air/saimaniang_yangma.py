@@ -396,7 +396,7 @@ def study_skill(page_type = 0):
             break
         if exists(Template(r"tpl1694617844205.png", threshold=0.9, record_pos=(0.475, 0.55), resolution=(720, 1280))):
             break
-        swipe((355, 745), (355, 575), steps = 5, duration = 0.5)
+        swipe((355, 980), (355, 575), steps = 5, duration = 0.5)
         touch((355, 745))
         sleep(0.5)
     if exists(Template(r"tpl1694618104113.png", threshold=0.7, rgb=True, record_pos=(-0.001, 0.613), resolution=(720, 1280))):
