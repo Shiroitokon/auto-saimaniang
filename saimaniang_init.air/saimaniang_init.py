@@ -21,7 +21,7 @@ skip_aren = (528, 990, 720, 1280)
 niudan_left_point = (674,778)
 menu_point = (698,57)
 menu_bottom = (698,1086)
-niudan_banner_template = 
+niudan_banner_template = Template(r"tpl1700481975583.png", record_pos=(-0.046, 0.183), resolution=(720, 1280))
 #ST.THRESHOLD = 0.7
 ST.CVSTRATEGY = ["tpl","sift"]
 ST.FIND_TIMEOUT_TMP = 0
