@@ -65,8 +65,8 @@ train_power_area_point = (297, 888, 429, 1188)
 train_perseverance_area_point = (429, 888, 561, 1188)
 train_intelligence_area_point = (561, 888, 693, 1188)
 #比赛误识别文本修复
-ocr_match_fix_table = {"(康丽莎电女树":"伊丽莎白女王杯","安心~针灸师,登女场":"安心～针灸师,登☆场", 
-                 "锦月鸡": "皋月奖", 
+ocr_match_fix_table = {"(康丽莎电女树":"伊丽莎白女王杯",
+                 "锦月鸡": "皋月奖", "宋月鸡": "皋月奖", "铜月鸡": "皋月奖", 
                        "送王奖巷":"天王奖秋", "医王奖巷": "天王奖秋", "医王奖糖":"天王奖秋","送王奖糖":"天王奖秋",
                        "源":"大阪杯", "状·":"天王奖春",
                  "状":"天王奖春"}
@@ -477,7 +477,7 @@ def find_match(name):
     
         swipe((375, 930), (375, 741), steps = 15, duration = 1)
         touch((375, 741))
-        sleep(0.5)        
+        sleep(1)        
 
 def find_support(name):
     
